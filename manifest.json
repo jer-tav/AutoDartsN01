@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "autodarts → n01 (bridge)",
+  "version": "0.3.20260813",
+  "description": "Content script conversion of the TamperMonkey userscript: enters turns into n01 or DartCounter by reading the Autodarts board.",
+  "permissions": ["storage"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://n01darts.com/n01/web/*",
+        "https://n01darts.com/n01/online/n01.php*",
+        "https://n01darts.com/n01/tournament/n01_live.php*",
+        "https://n01darts.com/n01/tournament/n01_online.php*",
+        "https://n01darts.com/n01/league/n01_live.php*",
+        "https://n01darts.com/n01/league/n01_online.php*",
+        "https://nakka.com/n01/web/*",
+        "https://nakka.com/n01/online/n01.php*",
+        "https://nakka.com/n01/tournament/n01_live.php*",
+        "https://nakka.com/n01/tournament/n01_online.php*",
+        "https://nakka.com/n01/league/n01_live.php*",
+        "https://nakka.com/n01/league/n01_online.php*",
+        "https://app.dartcounter.net/*"
+      ],
+      "js": ["bootstrap_storage_sync.js", "contentScript-full.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
