@@ -15,17 +15,31 @@ function showStatus(message, isError = false) {
   status.classList.toggle("error", isError);
 }
 
+function requestBoardPermission(boardUrl) {
+  const origin = `${new URL(boardUrl).origin}/*`;
+  return new Promise((resolve) => {
+    chrome.permissions.request({ origins: [origin] }, (granted) => {
+      resolve(granted && chrome.runtime.lastError === undefined);
+    });
+  });
+}
+
 chrome.storage.local.get(BOARD_URL_KEY, (stored) => {
   const savedUrl = stored[BOARD_URL_KEY];
   if (typeof savedUrl === "string") addressInput.value = savedUrl.replace(/^https?:\/\//i, "");
 });
 
-settingsForm.addEventListener("submit", (event) => {
+settingsForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const boardUrl = normalizeBoardUrl(addressInput.value);
   if (boardUrl === undefined) {
     showStatus("Use an IPv4 address ending in :3180.", true);
     addressInput.focus();
+    return;
+  }
+
+  if (!(await requestBoardPermission(boardUrl))) {
+    showStatus("Board access was not granted.", true);
     return;
   }
 

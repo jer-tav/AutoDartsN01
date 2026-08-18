@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         autodarts → n01 (no app)
 // @namespace    autodarts-bridge
-// @version      0.3.202608131935
+// @version      0.1.0
 // @description  Enters turns into n01 or DartCounter, reading the Autodarts board directly - nothing to run beside the browser. Starts in dry-run. Build 202608131935-4954d12
 // @match        https://n01darts.com/n01/web/*
 // @match        https://n01darts.com/n01/online/n01.php*
@@ -1698,6 +1698,21 @@
       }
     });
   }
+  function requestBoardPermission(url) {
+    return new Promise((resolve) => {
+      try {
+        chrome.runtime.sendMessage({ type: "requestBoardPermission", url }, (response) => {
+          if (chrome.runtime.lastError !== void 0 || response?.granted !== true) {
+            resolve({ granted: false, detail: response?.detail });
+            return;
+          }
+          resolve({ granted: true });
+        });
+      } catch {
+        resolve({ granted: false });
+      }
+    });
+  }
 
   // sink/runtime/board.ts
   var POLL_MS = 300;
@@ -3023,10 +3038,15 @@
       settings.write(LANG_KEY, next);
       draw();
     },
-    setBridgeUrl: (url) => {
+    setBridgeUrl: async (url) => {
       const trimmed = url.trim();
       if (!/^https?:\/\//.test(trimmed)) {
         log(`the ${SOURCE_NAME} address must start with http://`);
+        return;
+      }
+      const permission = await requestBoardPermission(trimmed);
+      if (!permission.granted) {
+        log(`board access was not granted for ${trimmed}${permission.detail === void 0 ? "" : `: ${permission.detail}`}`);
         return;
       }
       gmStorage.write(BRIDGE_URL_KEY, trimmed);

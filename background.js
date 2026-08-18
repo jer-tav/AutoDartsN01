@@ -1,5 +1,26 @@
-// background service worker: handles gmFetch requests from the content script
+function boardOriginPattern(value) {
+  try {
+    const url = new URL(value);
+    if ((url.protocol !== 'http:' && url.protocol !== 'https:') || url.hostname === '' || url.username !== '' || url.password !== '') return undefined;
+    return `${url.origin}/*`;
+  } catch {
+    return undefined;
+  }
+}
+
+// background service worker: handles board access and gmFetch requests from the content script
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message && message.type === 'requestBoardPermission') {
+    const origin = boardOriginPattern(message.url);
+    if (origin === undefined) {
+      sendResponse({ granted: false, detail: 'invalid board address' });
+      return;
+    }
+    chrome.permissions.request({ origins: [origin] }, (granted) => {
+      sendResponse({ granted, detail: chrome.runtime.lastError?.message });
+    });
+    return true;
+  }
   if (!message || message.type !== 'gmFetch') return;
   const call = message.call || {};
   (async () => {

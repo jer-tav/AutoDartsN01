@@ -1,10 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "autodarts → n01 (bridge)",
+  "name": "autodarts → n01",
   "version": "0.0.1",
   "description": "Content script conversion of the TamperMonkey userscript: enters turns into n01 or DartCounter by reading the Autodarts board.",
   "permissions": ["storage"],
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": [
+    "https://n01darts.com/*",
+    "https://nakka.com/*",
+    "https://app.dartcounter.net/*",
+    "http://127.0.0.1:3180/*",
+    "http://opendartboard.local:3180/*"
+  ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
   "background": {
     "service_worker": "background.js"
   },

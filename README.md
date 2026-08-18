@@ -15,6 +15,7 @@ Content script conversion of the original TamperMonkey userscript. This browser 
 - File layout
 - Permissions
 - Configuration
+- Privacy
 - Usage
 - Troubleshooting
 - Contributing
@@ -22,14 +23,15 @@ Content script conversion of the original TamperMonkey userscript. This browser 
 
 ## About
 
-This project is a browser extension (Manifest V3) that bridges AutoDarts board data into n01 (and DartCounter) web apps by injecting content scripts on supported pages and syncing required data. It started as a conversion of a TamperMonkey userscript into a proper extension.
+This project is a Manifest V3 browser extension that reads the AutoDarts board and enters turns into n01, nakka, or DartCounter. It injects its content scripts only on supported scoring pages and started as a conversion of a TamperMonkey userscript.
 
 ## Features
 
 - Automatically reads turns from the AutoDarts board
 - Enters turns into n01 or DartCounter web UI
-- Runs as a content script at `document_idle` for minimal page interference
-- Background service worker to support any required background tasks and storage sync
+- Displays board state, darts, turn totals, and scoring controls in a right-hand sidebar
+- Supports preview mode, automatic turn entry, or confirmation before entry
+- Stores extension configuration locally in Chrome
 
 ## Supported sites
 
@@ -69,10 +71,10 @@ The extension injects scripts on the following host patterns (from the manifest)
 
 Key files in the repository:
 
-- [manifest.json](C:/Projects/AutoDartsN01/manifest.json) — extension manifest (manifest_version: 3)
-- [background.js](C:/Projects/AutoDartsN01/background.js) — service worker (background) script (if present)
-- [bootstrap_storage_sync.js](C:/Projects/AutoDartsN01/bootstrap_storage_sync.js) — storage/bootstrap helper used by content scripts
-- [contentScript-full.js](C:/Projects/AutoDartsN01/contentScript-full.js) — main content script that performs board reading and input
+- [manifest.json](manifest.json) — extension manifest
+- [background.js](background.js) — service worker that requests board permission and reads the board API
+- [bootstrap_storage_sync.js](bootstrap_storage_sync.js) — storage bootstrap helper used by content scripts
+- [contentScript-full.js](contentScript-full.js) — main content script that renders the sidebar, reads board state, and enters scores
 
 (If any of the files above don't exist in the repo root, adjust paths accordingly.)
 
@@ -80,15 +82,16 @@ Key files in the repository:
 
 From the manifest:
 
-- `storage` — for persisting settings or syncing data.
-- host permissions for supported URLs (and `app.dartcounter.net`) — needed to inject scripts on those sites.
+- `storage` — persists extension configuration and its storage mirror locally in Chrome.
+- Required host permissions cover n01, nakka, DartCounter, and the default local board addresses `http://127.0.0.1:3180` and `http://opendartboard.local:3180`.
+- Optional host permissions cover custom HTTP or HTTPS board addresses. Chrome prompts for permission to the exact board origin when you save one.
 
 ## Configuration
 
 The extension panel appears as a right-hand sidebar on supported n01, nakka, and DartCounter pages. The page uses the remaining two-thirds of the browser while the sidebar is open; use the `-` button in the panel header to minimize it and restore the page to full width.
 
 1. Reload the target game page after installing or reloading the extension.
-2. In the sidebar, enter the AutoDarts board address in the address field. Use a full URL such as `http://192.168.1.50:3180`, then press `Enter` to save it. The extension attempts to find a local board automatically at `http://127.0.0.1:3180` when no address has been saved.
+2. In the sidebar, enter the AutoDarts board address in the address field. Use a full URL such as `http://192.168.1.50:3180`, then press `Enter` to save it. Chrome asks for access to that exact board address; approve the request to use the board. The extension attempts to find a local board automatically at `http://127.0.0.1:3180` when no address has been saved.
 3. Leave the panel in **PREVIEW** mode while confirming that board events and detected darts are correct. Preview mode never enters scores into the game.
 4. Press **START** only when ready to enter scores automatically. Press **STOP** or `Ctrl+Shift+X` to return immediately to preview mode.
 5. Open the settings button to configure:
@@ -97,7 +100,11 @@ The extension panel appears as a right-hand sidebar on supported n01, nakka, and
   - Keyboard shortcuts for confirming a turn and correcting each dart.
 6. In confirmation mode, use the configured confirm shortcut (default: `Enter`) to send the shown turn. The default dart-correction shortcuts are `F1`, `F2`, and `F3`.
 
-The sidebar stores its board address, language, entry mode, panel state, appearance settings, position preferences, and shortcuts in browser storage for the current site.
+The extension stores its board address, language, entry mode, panel state, appearance settings, position preferences, and shortcuts in Chrome storage. See [PRIVACY.md](PRIVACY.md) for the complete data-handling description.
+
+## Privacy
+
+The extension has no developer-operated server and does not sell, share, or transmit data to the developer. It communicates only with the supported scoring page and the board address you configure. See [PRIVACY.md](PRIVACY.md) for the policy suitable for the Chrome Web Store listing.
 
 ## Usage
 
@@ -146,4 +153,4 @@ For questions, issues, or feature requests, open an issue in this repository.
 
 ---
 
-_Note: This README was generated from the project's manifest (see [manifest.json](C:/Projects/AutoDartsN01/manifest.json)). If there are additional project details (author, contributing guidelines, license) that should be included, provide them and the README can be updated._
+_Review the privacy policy before each release if the extension's storage, host permissions, or network behavior changes._
