@@ -37,7 +37,7 @@ This project is a Manifest V3 browser extension that reads the AutoDarts board a
 
 1. Get the latest [Release](https://github.com/jer-tav/AutoDartsN01/archive/refs/tags/v0.1.0.zip)
 2. Extract it to a folder
-3. Go to (chrome://extensions) and make sure Developer Mode is enabled in the top right
+3. Go to [chrome://extensions](chrome://extensions) and make sure Developer Mode is enabled in the top right
 4. Choose "Load Unpacked" from the top bar, and browse to the folder where the release was unzipped.
 5. From the extension icon at the top of the browser, choose "Options" 
 
