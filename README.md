@@ -39,8 +39,12 @@ This project is a Manifest V3 browser extension that reads the AutoDarts board a
 2. Extract it to a folder
 3. Go to (chrome://extensions) and make sure Developer Mode is enabled in the top right
 4. Choose "Load Unpacked" from the top bar, and browse to the folder where the release was unzipped.
-5. From the extension icon at the top of the browser, choose "Options" ![configure options](assets/image.png)
+5. From the extension icon at the top of the browser, choose "Options" 
+
+   ![configure options](assets/extensionsetting.png)
 6. Enter in the IP address of your Autodarts setup (i.e. 192.168.1.100:3180 or 127.0.0.1:3180)
+
+   ![enter board address](assets/boardaddress.png)
 
 ## Usage
 
