@@ -1,4 +1,4 @@
-(async () => {
+window.__n01SinkStorageReady = (async () => {
   // Load all keys from chrome.storage.local and copy them into localStorage so the content script
   // can synchronously read them as before. Then patch Storage.setItem/removeItem/clear to persist
   // changes back to chrome.storage.local.

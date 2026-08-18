@@ -1,12 +1,16 @@
 {
   "manifest_version": 3,
   "name": "autodarts → n01 (bridge)",
-  "version": "0.3.20260813",
+  "version": "0.0.1",
   "description": "Content script conversion of the TamperMonkey userscript: enters turns into n01 or DartCounter by reading the Autodarts board.",
   "permissions": ["storage"],
   "host_permissions": ["<all_urls>"],
   "background": {
     "service_worker": "background.js"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
   },
   "content_scripts": [
     {

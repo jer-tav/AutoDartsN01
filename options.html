@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>autodarts to n01 settings</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      color: #17211b;
+      background: #eef2eb;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+    }
+
+    main {
+      max-width: 520px;
+      margin: 72px auto;
+      padding: 0 24px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      font-weight: 650;
+    }
+
+    p {
+      margin: 0 0 28px;
+      color: #526058;
+      line-height: 1.5;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #8d9a90;
+      border-radius: 5px;
+      background: #fff;
+      color: #17211b;
+      font: 16px/1.3 ui-monospace, Consolas, monospace;
+    }
+
+    input:focus {
+      outline: 3px solid #b8d7c0;
+      border-color: #287343;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: 1px solid #1c6237;
+      border-radius: 5px;
+      background: #287343;
+      color: #fff;
+      font: 600 14px/1 "Segoe UI", Tahoma, sans-serif;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1c6237;
+    }
+
+    #status {
+      min-height: 20px;
+      color: #526058;
+      font-size: 14px;
+    }
+
+    #status.error {
+      color: #a31d1d;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Board connection</h1>
+    <p>Enter the IP address of the Autodarts board service. It must use port 3180.</p>
+    <form id="settings">
+      <label for="board-address">Board address</label>
+      <input id="board-address" type="text" inputmode="url" autocomplete="off" placeholder="192.168.1.50:3180" required>
+      <div class="actions">
+        <button type="submit">Save</button>
+        <output id="status" aria-live="polite"></output>
+      </div>
+    </form>
+  </main>
+  <script src="options.js"></script>
+</body>
+</html>

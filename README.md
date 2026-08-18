@@ -1,6 +1,6 @@
 # autodarts → n01 (bridge)
 
-**Version:** 0.3.20260813
+**Version:** 0.0.1
 
 Content script conversion of the original TamperMonkey userscript. This browser extension reads the AutoDarts board and enters turns into n01 or DartCounter automatically.
 
@@ -14,6 +14,7 @@ Content script conversion of the original TamperMonkey userscript. This browser 
 - Development (Load unpacked / test locally)
 - File layout
 - Permissions
+- Configuration
 - Usage
 - Troubleshooting
 - Contributing
@@ -82,12 +83,29 @@ From the manifest:
 - `storage` — for persisting settings or syncing data.
 - host permissions for supported URLs (and `app.dartcounter.net`) — needed to inject scripts on those sites.
 
+## Configuration
+
+The extension panel appears as a right-hand sidebar on supported n01, nakka, and DartCounter pages. The page uses the remaining two-thirds of the browser while the sidebar is open; use the `-` button in the panel header to minimize it and restore the page to full width.
+
+1. Reload the target game page after installing or reloading the extension.
+2. In the sidebar, enter the AutoDarts board address in the address field. Use a full URL such as `http://192.168.1.50:3180`, then press `Enter` to save it. The extension attempts to find a local board automatically at `http://127.0.0.1:3180` when no address has been saved.
+3. Leave the panel in **PREVIEW** mode while confirming that board events and detected darts are correct. Preview mode never enters scores into the game.
+4. Press **START** only when ready to enter scores automatically. Press **STOP** or `Ctrl+Shift+X` to return immediately to preview mode.
+5. Open the settings button to configure:
+  - When turns are entered: automatically when darts are removed, or only after confirmation.
+  - Panel size and opacity.
+  - Keyboard shortcuts for confirming a turn and correcting each dart.
+6. In confirmation mode, use the configured confirm shortcut (default: `Enter`) to send the shown turn. The default dart-correction shortcuts are `F1`, `F2`, and `F3`.
+
+The sidebar stores its board address, language, entry mode, panel state, appearance settings, position preferences, and shortcuts in browser storage for the current site.
+
 ## Usage
 
-1. Install the extension as described in Installation.
-2. Open a supported site and start or join a game on the n01/nakka or DartCounter interface.
-3. The extension should detect the AutoDarts board and automatically enter turns into the web UI.
-4. Use the browser devtools (Console) to view logs and debug information from the content scripts.
+1. Install and configure the extension as described above.
+2. Open or reload a supported site and start or join a game on the n01/nakka or DartCounter interface.
+3. Confirm the sidebar reports that it is connected to the AutoDarts board and shows the expected darts.
+4. Press **START** when ready for the extension to enter turns into the web UI.
+5. Use the browser devtools Console to inspect logs when troubleshooting.
 
 ## Troubleshooting
 

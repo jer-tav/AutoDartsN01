@@ -1687,19 +1687,15 @@
       try {
         chrome.runtime.sendMessage({ type: "gmFetch", call }, (response) => {
           // response should mimic GM_xmlhttpRequest's response object or be undefined on error
+          if (chrome.runtime.lastError !== void 0 || response === null) {
+            resolve(void 0);
+            return;
+          }
           resolve(response);
         });
       } catch (e) {
         resolve(void 0);
       }
-    });
-  };
-
-        ...call,
-        onload: (response) => finish(response),
-        onerror: () => finish(void 0),
-        ontimeout: () => finish(void 0)
-      });
     });
   }
 
@@ -2123,18 +2119,21 @@
   var LOG_LINES_SHOWN = 80;
   var STYLE = [
     "position:fixed",
-    "right:10px",
-    "bottom:10px",
+    "top:0",
+    "right:0",
+    "bottom:0",
     "z-index:2147483647",
-    "width:300px",
+    "width:33.333vw",
+    "box-sizing:border-box",
     "padding:9px 10px",
-    "background:rgba(17,17,17,0.95)",
+    "overflow-y:auto",
+    "background:#111",
     "color:#eee",
     "font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace",
     "border:1px solid #444",
     "border-radius:6px"
   ].join(";");
-  var MODE_BOX = "margin:0 0 6px;padding:6px 8px;border-radius:5px;text-align:center;font-size:15px;font-weight:bold;letter-spacing:.06em;cursor:move;touch-action:none;user-select:none";
+  var MODE_BOX = "margin:0 0 6px;padding:6px 8px;border-radius:5px;text-align:center;font-size:15px;font-weight:bold;letter-spacing:.06em;user-select:none";
   var PRIMARY = "flex:1;padding:9px 2px;font:inherit;font-size:13px;font-weight:bold;letter-spacing:.06em;cursor:pointer;border-radius:5px";
   var SMALL = "padding:9px 8px;font:inherit;cursor:pointer;border:1px solid #555;background:#222;color:#eee;border-radius:5px";
   var PILL = [
@@ -2155,9 +2154,9 @@
     "cursor:pointer"
   ].join(";");
   var SCOREBOARD = [
-    "position:fixed",
-    "z-index:2147483647",
-    "width:300px",
+    "position:relative",
+    "width:100%",
+    "box-sizing:border-box",
     "padding:8px 9px 9px",
     "background:rgba(17,17,17,0.95)",
     "color:#eee",
@@ -2165,8 +2164,7 @@
     "border:1px solid #444",
     "border-radius:6px"
   ].join(";");
-  var DEFAULT_POSITION = { x: 16, y: 16 };
-  var EDGE = 60;
+  var DEFAULT_POSITION = { x: 10, y: 10 };
   var MODE_COLOURS = {
     live: ["#14361f", "#2f7a49", "#b8f5b8"],
     dry: ["#26292f", "#454a55", "#dcdfe4"],
@@ -2191,19 +2189,19 @@
   var PAD_KEY = "padding:8px 0;font:inherit;font-size:12px;font-weight:bold;cursor:pointer;border:1px solid #555;background:#222;color:#eee;border-radius:4px";
   var PAD_NUMS = "display:grid;grid-template-columns:repeat(5,1fr);gap:4px";
   var PAD = [
-    "position:fixed",
-    "left:50%",
-    "top:50%",
-    "z-index:2147483647",
+    "position:absolute",
+    "inset:0",
+    "z-index:1",
     "display:none",
-    "width:300px",
+    "width:auto",
+    "box-sizing:border-box",
     "padding:8px 9px 9px",
     "background:rgba(17,17,17,0.98)",
     "color:#eee",
     "font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace",
     "border:1px solid #666",
-    "border-radius:6px",
-    "box-shadow:0 8px 30px rgba(0,0,0,0.55)"
+    "border-radius:0",
+    "overflow-y:auto"
   ].join(";");
   var PAD_HEIGHT = 360;
   var RING_ROW = "display:flex;gap:4px;margin:6px 0";
@@ -2283,8 +2281,17 @@
     /** Where the scoreboard actually ended up, which is the stored position clamped to the screen. */
     #placed = DEFAULT_POSITION;
     #dragging = false;
+    #pageLayout;
     constructor(document2, actions) {
       this.#actions = actions;
+      document2.documentElement.style.removeProperty("width");
+      document2.body.style.removeProperty("width");
+      document2.body.style.removeProperty("min-width");
+      document2.body.style.removeProperty("margin-right");
+      this.#pageLayout = document2.createElement("style");
+      this.#pageLayout.setAttribute(PANEL_MARK, "");
+      this.#pageLayout.textContent = `body[data-n01-sink-sidebar="open"] > :not([${PANEL_MARK}]) { width:66.667vw !important; max-width:66.667vw !important; box-sizing:border-box !important; }`;
+      document2.head.appendChild(this.#pageLayout);
       const root = document2.createElement("div");
       root.style.cssText = STYLE;
       this.#panel = root;
@@ -2495,12 +2502,9 @@
       this.#scoreboard = document2.createElement("div");
       this.#scoreboard.style.cssText = SCOREBOARD;
       this.#scoreboard.append(this.#mode, this.#noticeLine, this.#slotRow, this.#statRow);
-      root.append(header, this.#controls, this.#settings);
+      root.append(header, this.#scoreboard, this.#controls, this.#settings, this.#pad);
       for (const mine of [this.#scoreboard, this.#pad, root]) mine.setAttribute(PANEL_MARK, "");
-      document2.body.appendChild(this.#scoreboard);
-      document2.body.appendChild(this.#pad);
       document2.body.appendChild(root);
-      this.#dragBy(this.#mode, actions);
       this.#pill = document2.createElement("div");
       this.#pill.style.cssText = PILL;
       this.#pill.setAttribute(PANEL_MARK, "");
@@ -2604,9 +2608,15 @@
       this.#settingsOpen = false;
       this.#binding = void 0;
     }
+    /** Keeps fixed page layers, such as headers and footers, within the space left by the sidebar. */
+    #setPageLayout(collapsed) {
+      if (collapsed) delete this.#panel.ownerDocument.body.dataset.n01SinkSidebar;
+      else this.#panel.ownerDocument.body.dataset.n01SinkSidebar = "open";
+    }
     render(view) {
       this.#view = view;
       this.#lang = view.lang;
+      this.#setPageLayout(view.collapsed);
       const t = (key, ...args) => panelText(this.#lang, key, ...args);
       const live = !view.dryRun && !view.paused;
       this.#shrink.title = t("collapse");
@@ -2624,11 +2634,9 @@
       this.#pill.title = t("expand");
       this.#panel.style.display = view.collapsed ? "none" : "";
       this.#pill.style.display = view.collapsed ? "flex" : "none";
-      if (!this.#dragging) this.#place(view.position);
       const scale2 = clampScale(view.scale);
       const height = this.#viewport().height;
-      this.#scoreboard.style.transform = scale2 === 1 ? "" : `scale(${scale2})`;
-      this.#scoreboard.style.transformOrigin = "top left";
+      this.#scoreboard.style.transform = "";
       const opacity2 = clampOpacity(view.opacity);
       this.#scoreboard.style.opacity = opacity2 === 1 ? "" : String(opacity2);
       if (this.#padAt !== void 0 && this.#padAt >= view.slots.length) this.#padAt = void 0;
@@ -2637,9 +2645,7 @@
       this.#pad.style.display = padOpen ? "" : "none";
       this.#controls.style.display = this.#settingsOpen ? "none" : "";
       this.#settings.style.display = this.#settingsOpen ? "" : "none";
-      const room = typeof height === "number" ? Math.max(1, (height - 40) / PAD_HEIGHT) : scale2;
-      const padScale = Math.min(scale2, room);
-      this.#pad.style.transform = `translate(-50%, -50%)${padScale === 1 ? "" : ` scale(${padScale})`}`;
+      this.#pad.style.transform = "";
       const waiting = view.pending === void 0 ? "" : t("confirmWaiting", view.pending, keyLabel(view.keys.confirm));
       const line = waiting === "" ? view.notice : waiting;
       this.#noticeLine.style.display = line === "" ? "none" : "";
@@ -2655,7 +2661,7 @@
       this.#pillLeft.style.color = text3;
       this.#pillOut.textContent = view.checkout === void 0 ? "" : view.checkout.join(" ");
       this.#mode.textContent = view.paused ? t("paused") : live ? t("live") : t("preview");
-      this.#mode.title = t("dragHint");
+      this.#mode.title = "";
       this.#mode.style.background = background;
       this.#mode.style.border = `1px solid ${border}`;
       this.#mode.style.color = text3;
@@ -2881,7 +2887,7 @@
   var DEFAULT_SOURCE_URL = "http://127.0.0.1:3180";
   var SOURCE_NAME = true ? "board" : "app";
   var LOG_LINES = 200;
-  var sourceUrl = gmStorage.read(BRIDGE_URL_KEY) ?? DEFAULT_SOURCE_URL;
+  var sourceUrl = DEFAULT_SOURCE_URL;
   var settings = sharedSettings(gmStorage, pageStorage());
   var recent = [];
   var clock = () => (/* @__PURE__ */ new Date()).toTimeString().slice(0, 8);
@@ -3112,6 +3118,7 @@
   }
   var IDLE_READ_MS = 1200;
   function boot(startSource) {
+    sourceUrl = gmStorage.read(BRIDGE_URL_KEY) ?? DEFAULT_SOURCE_URL;
     draw();
     startSource();
     let reading = false;
@@ -3127,5 +3134,5 @@
   }
 
   // sink/entry-board.ts
-  boot(() => void startBoard());
+  Promise.resolve(window.__n01SinkStorageReady).then(() => boot(() => void startBoard()));
 })();
