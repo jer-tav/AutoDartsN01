@@ -89,8 +89,6 @@ Key files in the repository:
 - [bootstrap_storage_sync.js](bootstrap_storage_sync.js) — storage bootstrap helper used by content scripts
 - [contentScript-full.js](contentScript-full.js) — main content script that renders the sidebar, reads board state, and enters scores
 
-(If any of the files above don't exist in the repo root, adjust paths accordingly.)
-
 ## Permissions
 
 From the manifest:
@@ -102,14 +100,6 @@ From the manifest:
 ## Privacy
 
 The extension has no developer-operated server and does not sell, share, or transmit data to the developer. It communicates only with the supported scoring page and the board address you configure. See [PRIVACY.md](PRIVACY.md) for the policy suitable for the Chrome Web Store listing.
-
-## Usage
-
-1. Install and configure the extension as described above.
-2. Open or reload a supported site and start or join a game on the n01/nakka or DartCounter interface.
-3. Confirm the sidebar reports that it is connected to the AutoDarts board and shows the expected darts.
-4. Press **START** when ready for the extension to enter turns into the web UI.
-5. Use the browser devtools Console to inspect logs when troubleshooting.
 
 ## Troubleshooting
 

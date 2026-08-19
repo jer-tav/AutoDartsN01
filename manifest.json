@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "autodarts → n01",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "This extension takes scores from the configured Autodarts system, and inputs them into an active game on the n01 website.",
   "icons": {
     "16": "assets/icon-16.png",

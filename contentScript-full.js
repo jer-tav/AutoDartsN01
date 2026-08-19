@@ -1985,6 +1985,9 @@
     btnStop: "STOP",
     btnCopy: "copy",
     btnCopyHint: "Copy the log and the build details, to paste into a message",
+    btnLog: "log",
+    btnLogShowHint: "Show the log",
+    btnLogHideHint: "Hide the log",
     btnBack: "back",
     btnRemove: "remove",
     btnRemoveHint: "There was no dart here",
@@ -2020,8 +2023,8 @@
     nothingToEnter: "nothing in the board to enter",
     copied: "copied",
     copyFailed: "blocked",
-    addressHint: "Address of the app, if it runs on another machine. Enter to save",
-    addressHintBoard: "Address of the board, if it is not on this machine. Enter to save",
+    addressHint: "Address of the app, if it runs on another machine.",
+    addressHintBoard: "Address of the board, if it is not on this machine.",
     collapse: "Shrink to a badge",
     expand: "Open the panel",
     /** The button shows the code of the language it switches *to*; the sentence is its tooltip. */
@@ -2077,6 +2080,9 @@
     btnStop: "STOP",
     btnCopy: "kopiuj",
     btnCopyHint: "Skopiuj log i dane builda, do wklejenia w wiadomo\u015Bci",
+    btnLog: "log",
+    btnLogShowHint: "Poka\u017C log",
+    btnLogHideHint: "Ukryj log",
     btnBack: "wr\xF3\u0107",
     btnRemove: "usu\u0144",
     btnRemoveHint: "Nie by\u0142o tu lotki",
@@ -2102,8 +2108,8 @@
     nothingToEnter: "w tarczy nie ma czego wpisa\u0107",
     copied: "skopiowane",
     copyFailed: "zablokowane",
-    addressHint: "Adres aplikacji, je\u015Bli dzia\u0142a na innej maszynie. Enter zapisuje",
-    addressHintBoard: "Adres tarczy, je\u015Bli nie jest na tej maszynie. Enter zapisuje",
+    addressHint: "Adres aplikacji, je\u015Bli dzia\u0142a na innej maszynie.",
+    addressHintBoard: "Adres tarczy, je\u015Bli nie jest na tej maszynie.",
     collapse: "Zwi\u0144 do znaczka",
     expand: "Otw\xF3rz panel",
     langCode: "EN",
@@ -2133,15 +2139,18 @@
   var clampOpacity = (opacity2) => clamp(opacity2, MIN_OPACITY, MAX_OPACITY, 1);
   var LOG_LINES_SHOWN = 80;
   var STYLE = [
-    "position:fixed",
-    "top:0",
-    "right:0",
-    "bottom:0",
-    "z-index:2147483647",
-    "width:33.333vw",
-    "box-sizing:border-box",
-    "padding:9px 10px",
-    "overflow-y:auto",
+    "position:fixed!important",
+    "top:0!important",
+    "right:0!important",
+    "bottom:0!important",
+    "z-index:2147483647!important",
+    "width:33.333vw!important",
+    "box-sizing:border-box!important",
+    "padding:9px 10px!important",
+    "display:flex!important",
+    "flex-direction:column!important",
+    "gap:9px!important",
+    "overflow-y:auto!important",
     "background:#111",
     "color:#eee",
     "font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace",
@@ -2177,7 +2186,11 @@
     "color:#eee",
     "font:11px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace",
     "border:1px solid #444",
-    "border-radius:6px"
+    "border-radius:6px",
+    "flex:1!important",
+    "display:flex!important",
+    "flex-direction:column!important",
+    "min-height:0!important"
   ].join(";");
   var DEFAULT_POSITION = { x: 10, y: 10 };
   var MODE_COLOURS = {
@@ -2185,22 +2198,29 @@
     dry: ["#26292f", "#454a55", "#dcdfe4"],
     paused: ["#3a1f1f", "#8a2a2a", "#ffb3b3"]
   };
-  var SLOT_ROW = "display:flex;gap:5px;margin:7px 0 4px";
+  var SLOT_ROW = "display:flex!important;flex-direction:column!important;gap:5px;margin:7px 0 4px;flex:1!important;min-height:0!important";
   var SLOT = [
     "position:relative",
-    "flex:1 1 0",
-    "min-width:0",
-    "padding:5px 2px 4px",
+    "width:100%",
+    "box-sizing:border-box",
+    "padding:6px 9px",
     "border-radius:5px",
-    "text-align:center",
+    "display:flex!important",
+    "align-items:center",
+    "justify-content:space-between",
+    "gap:8px",
     "background:#1b1b1b",
     "cursor:pointer",
-    "user-select:none"
+    "user-select:none",
+    "overflow:hidden",
+    "flex:1 1 0!important",
+    "min-height:0!important"
   ].join(";");
   var EDITED = "#f0c04a";
-  var SLOT_NAME = "font-size:19px;font-weight:bold;line-height:1.15;overflow:hidden;text-overflow:ellipsis";
-  var SLOT_META = "font-size:9px;color:#8a8a8a;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
-  var SLOT_KILL = "position:absolute;top:0;right:3px;font-size:12px;line-height:1.2;color:#8a8a8a";
+  var SLOT_NAME = "font-size:19px;font-weight:bold;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap";
+  var SLOT_META = "font-size:9px;color:#8a8a8a;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right";
+  var SLOT_VALUE = "text-align:right;flex:0 0 auto";
+  var SLOT_KILL = "font-size:12px;line-height:1;color:#8a8a8a;cursor:pointer;flex:0 0 auto";
   var PAD_KEY = "padding:8px 0;font:inherit;font-size:12px;font-weight:bold;cursor:pointer;border:1px solid #555;background:#222;color:#eee;border-radius:4px";
   var PAD_NUMS = "display:grid;grid-template-columns:repeat(5,1fr);gap:4px";
   var PAD = [
@@ -2220,18 +2240,23 @@
   ].join(";");
   var PAD_HEIGHT = 360;
   var RING_ROW = "display:flex;gap:4px;margin:6px 0";
-  var STAT_ROW = "display:flex;gap:5px;margin-bottom:5px";
   var STAT = [
-    "flex:1 1 0",
-    "min-width:0",
-    "padding:4px 6px 5px",
+    "width:100%",
+    "box-sizing:border-box",
+    "padding:5px 9px",
     "border:1px solid #444",
     "border-radius:5px",
     "background:#1b1b1b",
-    "text-align:center"
+    "display:flex!important",
+    "align-items:center",
+    "justify-content:space-between",
+    "gap:8px",
+    "overflow:hidden",
+    "flex:1 1 0!important",
+    "min-height:0!important"
   ].join(";");
   var STAT_LABEL = "font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#9aa0a8";
-  var STAT_VALUE = "font-size:21px;font-weight:bold;line-height:1.1";
+  var STAT_VALUE = "font-size:19px;font-weight:bold;line-height:1.15;text-align:right";
   var SETTING_ROW = "display:flex;align-items:center;gap:6px;margin-top:4px";
   var RINGS2 = ["S", "D", "T"];
   var Widget = class {
@@ -2246,7 +2271,8 @@
     #shrink;
     #mode;
     #slotRow;
-    #statRow;
+    #thrownBox;
+    #leftBox;
     #thrownLabel;
     #thrownValue;
     #thrownNote;
@@ -2261,6 +2287,7 @@
     #langButton;
     #address;
     #controls;
+    #logToggle;
     #pad;
     #padTitle;
     #padRings = [];
@@ -2293,6 +2320,8 @@
     #settingsOpen = false;
     /** Which shortcut is waiting for a key to be pressed at it. */
     #binding;
+    /** Whether the scrolling log is expanded to fill the space below the board-status section. */
+    #logOpen = false;
     /** Where the scoreboard actually ended up, which is the stored position clamped to the screen. */
     #placed = DEFAULT_POSITION;
     #dragging = false;
@@ -2323,18 +2352,19 @@
       this.#mode.style.cssText = MODE_BOX;
       this.#slotRow = document2.createElement("div");
       this.#slotRow.style.cssText = SLOT_ROW;
-      this.#statRow = document2.createElement("div");
-      this.#statRow.style.cssText = STAT_ROW;
       const stat = () => {
         const box = document2.createElement("div");
         box.style.cssText = STAT;
         const label = document2.createElement("div");
         label.style.cssText = STAT_LABEL;
+        const right = document2.createElement("div");
+        right.style.cssText = "text-align:right";
         const value2 = document2.createElement("div");
         value2.style.cssText = STAT_VALUE;
         const note = document2.createElement("div");
         note.style.cssText = SLOT_META;
-        box.append(label, value2, note);
+        right.append(value2, note);
+        box.append(label, right);
         return { box, label, value: value2, note };
       };
       const thrown = stat();
@@ -2345,7 +2375,8 @@
       this.#leftLabel = left.label;
       this.#leftValue = left.value;
       this.#leftOut = left.note;
-      this.#statRow.append(thrown.box, left.box);
+      this.#thrownBox = thrown.box;
+      this.#leftBox = left.box;
       this.#noticeLine = document2.createElement("div");
       this.#noticeLine.style.cssText = `display:none;margin:0 0 4px;color:${EDITED}`;
       this.#body = document2.createElement("div");
@@ -2364,6 +2395,12 @@
       this.#langButton = document2.createElement("button");
       this.#langButton.style.cssText = SMALL;
       this.#langButton.onclick = () => actions.setLang(this.#lang === "pl" ? "en" : "pl");
+      this.#logToggle = document2.createElement("button");
+      this.#logToggle.style.cssText = SMALL;
+      this.#logToggle.onclick = () => {
+        this.#logOpen = !this.#logOpen;
+        this.#redraw();
+      };
       this.#settingsButton = document2.createElement("button");
       this.#settingsButton.style.cssText = SMALL;
       this.#settingsButton.textContent = "\u2699";
@@ -2373,7 +2410,7 @@
         this.#padAt = void 0;
         this.#redraw();
       };
-      row.append(this.#primary, this.#copy, this.#langButton, this.#settingsButton);
+      row.append(this.#primary, this.#copy, this.#langButton, this.#logToggle, this.#settingsButton);
       this.#address = document2.createElement("input");
       this.#address.placeholder = "http://127.0.0.1:9210";
       this.#address.style.cssText = "width:100%;box-sizing:border-box;margin-top:5px;padding:5px 6px;font:inherit;border:1px solid #555;background:#111;color:#eee;border-radius:4px";
@@ -2381,9 +2418,9 @@
         if (event.key === "Enter") actions.setBridgeUrl(this.#address.value);
       };
       this.#logBox = document2.createElement("div");
-      this.#logBox.style.cssText = "margin-top:7px;padding-top:6px;border-top:1px solid #333;white-space:pre-wrap;color:#8a8a8a;max-height:104px;overflow-y:auto;overscroll-behavior:contain";
+      this.#logBox.style.cssText = "margin-top:7px;padding-top:6px;border-top:1px solid #333;white-space:pre-wrap;color:#8a8a8a;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;display:none";
       this.#controls = document2.createElement("div");
-      this.#controls.append(this.#body, row, this.#address, this.#logBox);
+      this.#controls.append(this.#body, row, this.#address);
       this.#pad = document2.createElement("div");
       this.#pad.style.cssText = PAD;
       const padHeader = document2.createElement("div");
@@ -2516,8 +2553,8 @@
       this.#settings.append(settingsHeader, commitRow, this.#commitNote, size.row, fade.row, keyBox, this.#keysHint);
       this.#scoreboard = document2.createElement("div");
       this.#scoreboard.style.cssText = SCOREBOARD;
-      this.#scoreboard.append(this.#mode, this.#noticeLine, this.#slotRow, this.#statRow);
-      root.append(header, this.#scoreboard, this.#controls, this.#settings, this.#pad);
+      this.#scoreboard.append(this.#mode, this.#noticeLine, this.#slotRow);
+      root.append(header, this.#scoreboard, this.#controls, this.#logBox, this.#settings, this.#pad);
       for (const mine of [this.#scoreboard, this.#pad, root]) mine.setAttribute(PANEL_MARK, "");
       document2.body.appendChild(root);
       this.#pill = document2.createElement("div");
@@ -2638,6 +2675,8 @@
       this.#shrink.setAttribute("aria-label", t("collapse"));
       this.#copy.textContent = t("btnCopy");
       this.#copy.title = t("btnCopyHint");
+      this.#logToggle.textContent = `${this.#logOpen ? "\u25BE" : "\u25B8"} ${t("btnLog")}`;
+      this.#logToggle.title = this.#logOpen ? t("btnLogHideHint") : t("btnLogShowHint");
       this.#langButton.textContent = t("langCode");
       this.#langButton.title = t("langSwitch");
       this.#langButton.setAttribute("aria-label", t("langSwitch"));
@@ -2647,7 +2686,8 @@
       this.#address.title = t(board2 ? "addressHintBoard" : "addressHint");
       this.#address.placeholder = board2 ? "http://127.0.0.1:3180" : "http://127.0.0.1:9210";
       this.#pill.title = t("expand");
-      this.#panel.style.display = view.collapsed ? "none" : "";
+      // Assigning "" here would clear the !important flex display set in STYLE, collapsing the layout.
+      this.#panel.style.setProperty("display", view.collapsed ? "none" : "flex", "important");
       this.#pill.style.display = view.collapsed ? "flex" : "none";
       const scale2 = clampScale(view.scale);
       const height = this.#viewport().height;
@@ -2660,6 +2700,7 @@
       this.#pad.style.display = padOpen ? "" : "none";
       this.#controls.style.display = this.#settingsOpen ? "none" : "";
       this.#settings.style.display = this.#settingsOpen ? "" : "none";
+      this.#logBox.style.display = this.#settingsOpen || !this.#logOpen ? "none" : "";
       this.#pad.style.transform = "";
       const waiting = view.pending === void 0 ? "" : t("confirmWaiting", view.pending, keyLabel(view.keys.confirm));
       const line = waiting === "" ? view.notice : waiting;
@@ -2699,7 +2740,7 @@
         row("rowLast", describe(view.lastOutcome, this.#lang))
       ];
       if (view.paused && view.pauseReason !== "") lines.push(view.pauseReason);
-      this.#title.textContent = `autodarts \u2192 ${view.scorer}  v${view.version} \xB7 ${view.build}`;
+      this.#title.textContent = `autodarts \u2192 ${view.scorer}  v${view.version}`;
       this.#body.textContent = lines.join("\n");
       this.#primary.textContent = live ? t("btnStop") : t("btnStart");
       this.#primary.style.background = live ? "#7a2222" : "#1f6b3a";
@@ -2713,6 +2754,9 @@
       const document2 = this.#slotRow.ownerDocument;
       const t = (key, ...args) => panelText(this.#lang, key, ...args);
       this.#slotRow.textContent = "";
+      const names = [];
+      const meta = [];
+      const kills = [];
       slots.forEach((slot, position2) => {
         const empty = slot.state === "empty";
         const edited2 = slot.state === "corrected" || slot.state === "added";
@@ -2725,6 +2769,9 @@
         name.style.cssText = SLOT_NAME;
         name.style.color = empty ? "#6a6a6a" : edited2 ? EDITED : "#eee";
         name.textContent = empty ? "+" : slot.label;
+        names.push(name);
+        const right = document2.createElement("div");
+        right.style.cssText = SLOT_VALUE;
         const points = document2.createElement("div");
         points.style.cssText = SLOT_META;
         points.textContent = empty ? "" : String(slot.score);
@@ -2732,7 +2779,9 @@
         note.style.cssText = SLOT_META;
         if (edited2) note.style.color = EDITED;
         note.textContent = slot.boardSaid !== void 0 ? t("slotBoardSaid", slot.boardSaid) : slot.state === "added" ? t("slotAdded") : slot.state === "bounced" ? t("slotBounced") : "";
-        box.append(name, points, note);
+        meta.push(points, note);
+        right.append(points, note);
+        box.append(name, right);
         if (!empty) {
           const kill = document2.createElement("span");
           kill.style.cssText = SLOT_KILL;
@@ -2742,10 +2791,29 @@
             event.stopPropagation();
             this.#remove(position2);
           };
+          kills.push(kill);
           box.append(kill);
         }
         this.#slotRow.append(box);
       });
+      this.#slotRow.append(this.#thrownBox, this.#leftBox);
+      this.#fitScoreText(names, meta, kills);
+    }
+    /** Scales the dart/stat text to the box's actual height, so tall boxes aren't mostly empty. */
+    #fitScoreText(names, meta, kills) {
+      const sample = this.#slotRow.firstElementChild;
+      const boxHeight = sample === null ? 0 : sample.getBoundingClientRect().height;
+      if (boxHeight <= 0) return;
+      const nameSize = Math.max(19, Math.min(boxHeight * 0.4, 72));
+      const metaSize = Math.max(9, Math.min(boxHeight * 0.14, 22));
+      const killSize = Math.max(16, Math.min(boxHeight * 0.22, 34));
+      for (const name of names) name.style.fontSize = `${nameSize}px`;
+      for (const element of meta) element.style.fontSize = `${metaSize}px`;
+      for (const kill of kills) kill.style.fontSize = `${killSize}px`;
+      this.#thrownValue.style.fontSize = `${nameSize}px`;
+      this.#leftValue.style.fontSize = `${nameSize}px`;
+      this.#thrownNote.style.fontSize = `${metaSize}px`;
+      this.#leftOut.style.fontSize = `${metaSize}px`;
     }
     #drawPad(slots) {
       const t = (key, ...args) => panelText(this.#lang, key, ...args);
@@ -2825,7 +2893,6 @@
       const t = (key, ...args) => panelText(this.#lang, key, ...args);
       const report = [
         `version ${view.version}`,
-        `build ${view.build}`,
         `page ${location.href}`,
         `${view.source} ${view.bridgeUrl} ${view.connected ? t("connected") : t("offline")}${view.boardState === "" ? "" : ` \xB7 ${view.boardState}`}`,
         `mode ${view.paused ? t("paused") : view.dryRun ? t("preview") : t("live")}`,
@@ -3081,8 +3148,7 @@
       lastSeq: sink.lastSeq,
       lastOutcome: sink.lastOutcome,
       log: recent,
-      build: "202608131935-4954d12",
-      version: "0.3",
+      version: "0.0.3",
       source: "board",
       scorer: SCORER_NAME,
       bridgeUrl: sourceUrl,
@@ -3150,7 +3216,7 @@
         draw();
       });
     }, IDLE_READ_MS);
-    log(`v${"0.3"} \xB7 build ${"202608131935-4954d12"} \xB7 preview \xB7 ${KILL_COMBO} stops`);
+    log(`v${"0.0.3"} \xB7 preview \xB7 ${KILL_COMBO} stops`);
   }
 
   // sink/entry-board.ts
