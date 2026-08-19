@@ -2806,6 +2806,7 @@
       if (boxHeight <= 0) return;
       const nameSize = Math.max(19, Math.min(boxHeight * 0.4, 72));
       const metaSize = Math.max(9, Math.min(boxHeight * 0.14, 22));
+      const labelSize = Math.max(11, Math.min(boxHeight * 0.18, 26));
       const killSize = Math.max(16, Math.min(boxHeight * 0.22, 34));
       for (const name of names) name.style.fontSize = `${nameSize}px`;
       for (const element of meta) element.style.fontSize = `${metaSize}px`;
@@ -2814,6 +2815,8 @@
       this.#leftValue.style.fontSize = `${nameSize}px`;
       this.#thrownNote.style.fontSize = `${metaSize}px`;
       this.#leftOut.style.fontSize = `${metaSize}px`;
+      this.#thrownLabel.style.fontSize = `${labelSize}px`;
+      this.#leftLabel.style.fontSize = `${labelSize}px`;
     }
     #drawPad(slots) {
       const t = (key, ...args) => panelText(this.#lang, key, ...args);
